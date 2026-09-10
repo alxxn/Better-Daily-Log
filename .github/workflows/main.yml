@@ -1,15 +1,32 @@
 name: Better Daily Log
-version: 1.0.0
-author: TheMysteriousStar
-description: An Aroma plugin that improves the Daily Log user experience by adding TV information and Wii U Pro Controller and Wii Classic Controller input support.
-license: GPL-3.0
 
-repository: https://github.com/TheMysteriousStar/Better-Daily-Log
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
-type: plugin
-platform: wiiu
-environment: aroma
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-files:
-  - source: Better-Daily-Log.wps
-    destination: wiiu/environments/aroma/plugins/Better-Daily-Log.wps
+    container:
+      image: ghcr.io/wiiu-env/devkitppc:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make
+
+      - name: Upload WPS
+        uses: actions/upload-artifact@v4
+        with:
+          name: Better-Daily-Log
+          path: |
+            **/*.wps
