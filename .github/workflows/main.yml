@@ -18,19 +18,16 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y wget gpg
-
-          wget -qO- https://apt.devkitpro.org/install-devkitpro-pacman \
-            | bash
-
-          dkp-pacman -Syu --noconfirm
-          dkp-pacman -S --noconfirm --needed wut
+          apt-get install -y git make
 
       - name: Install WUPS
         run: |
           git clone https://github.com/wiiu-env/WiiUPluginSystem.git /tmp/wups
           cd /tmp/wups
           make install
+
+      - name: Clean
+        run: make clean
 
       - name: Build
         run: make
