@@ -1,12 +1,7 @@
-name: Better Daily Log
+name: Build Better Daily Log
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -14,30 +9,34 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/wiiu-env/devkitppc:latest
+      image: ghcr.io/wiiu-env/devkitppc:20260225
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install WUT
+      - name: Install dependencies
         run: |
-          git clone --depth 1 https://github.com/devkitPro/wut.git /tmp/wut
-          cd /tmp/wut
-          make install
+          apt-get update
+          apt-get install -y wget gpg
+
+          wget -qO- https://apt.devkitpro.org/install-devkitpro-pacman \
+            | bash
+
+          dkp-pacman -Syu --noconfirm
+          dkp-pacman -S --noconfirm --needed wut
 
       - name: Install WUPS
         run: |
-          git clone --depth 1 https://github.com/wiiu-env/WiiUPluginSystem.git /tmp/wups
+          git clone https://github.com/wiiu-env/WiiUPluginSystem.git /tmp/wups
           cd /tmp/wups
           make install
 
-      - name: Build Better Daily Log
-        run: |
-          make
+      - name: Build
+        run: make
 
       - name: Upload WPS
         uses: actions/upload-artifact@v4
         with:
           name: Better-Daily-Log
-          path: BetterDailyLog.wps
+          path: "*.wps"
