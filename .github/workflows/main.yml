@@ -20,7 +20,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Install WUT
+        run: |
+          git clone --depth 1 https://github.com/devkitPro/wut.git /tmp/wut
+          cd /tmp/wut
+          make install
+
+      - name: Install WUPS
+        run: |
+          git clone --depth 1 https://github.com/wiiu-env/WiiUPluginSystem.git /tmp/wups
+          cd /tmp/wups
+          make install
+
+      - name: Build Better Daily Log
         run: |
           make
 
@@ -28,5 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Better-Daily-Log
-          path: |
-            **/*.wps
+          path: BetterDailyLog.wps
